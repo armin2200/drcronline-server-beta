@@ -1,0 +1,9 @@
+extends email-layout
+
+block content
+  h2 Account Verification
+  p Hello. Please verify your account by clicking the following link
+  +button(resetURL, 'verify my Account →')
+  p If you can't click the above button please visit #{resetURL}
+  br
+  p If you didn't request this email, please ignore it.
