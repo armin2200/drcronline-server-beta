@@ -15,9 +15,7 @@ exports.resize = async (req, res, next) => {
     const photo = await jimp.read(req.file.buffer);
     await photo.resize(200, jimp.AUTO);
     await photo.write(`uploads/avatar/${profileImage}`);
-    req.body.profileImageUrl = `http://${
-      req.headers.host
-    }/uploads/avatar/${profileImage}`;
+    req.body.profileImageUrl = `https://drcronline-server/uploads/avatar/${profileImage}`;
     // once we have written the photo to our filesystem, keep going!
     next();
     // check if there is no new file to resize
