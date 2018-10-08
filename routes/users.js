@@ -58,7 +58,9 @@ router.post("/signup", async (req, res, next) => {
       _userId: user._id,
       token: crypto.randomBytes(16).toString("hex")
     });
-    const resetURL = `http://localhost:3000/confirmation/${tokenConfirm.token}`;
+    const resetURL = `https://drcronline.com/confirmation/${
+      tokenConfirm.token
+    }`;
     await mail.send({
       user,
       filename: "Account-Verification",
@@ -144,7 +146,9 @@ router.post("/confirmationResend", async (req, res, next) => {
       _userId: user._id,
       token: crypto.randomBytes(16).toString("hex")
     });
-    const resetURL = `http://localhost:3000/confirmation/${tokenConfirm.token}`;
+    const resetURL = `https://drcronline.com/confirmation/${
+      tokenConfirm.token
+    }`;
     await mail.send({
       user,
       filename: "Account-Verification",
@@ -170,7 +174,7 @@ router.post("/reset", async (req, res, next) => {
     user.resetPasswordToken = crypto.randomBytes(20).toString("hex");
     user.resetPasswordExpires = Date.now() + 3600000; //1 hour from now
     await user.save();
-    const resetURL = `http://localhost:3000/reset/${user.resetPasswordToken}`;
+    const resetURL = `https://drcronline.com/reset/${user.resetPasswordToken}`;
     await mail.send({
       user,
       filename: "password-reset",
