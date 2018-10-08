@@ -2,8 +2,6 @@ const nodemailer = require("nodemailer");
 const pug = require("pug");
 const juice = require("juice");
 const htmlToText = require("html-to-text");
-// const { promisify } = require("es6-promisify");
-// const { promisify } = require("util");
 
 const transport = nodemailer.createTransport({
   service: "gmail",
@@ -27,7 +25,7 @@ exports.send = async options => {
   const text = htmlToText.fromString(html);
 
   const mailOptions = {
-    from: '"Fred Foo 👻" <foo@example.com>',
+    from: '"Dr. Credit Reviver" <noreply@drcronline.com>',
     to: options.user.email,
     subject: options.subject,
     html,
