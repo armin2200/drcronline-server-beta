@@ -258,6 +258,7 @@ router.patch(
       if (!updatedUser.profileImageUrl) {
         updatedUser.profileImageName = undefined;
       }
+
       await updatedUser.save();
       const token = updatedUser.generateAuthToken();
       if (req.body.hasPicChange === "true" && profileImageName) {

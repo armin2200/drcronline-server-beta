@@ -1,15 +1,19 @@
 {
-  "name": "server",
+  "name": "drcronline-server",
   "version": "1.0.0",
   "engines": {
     "node": "v10.11.0"
   },
   "description": "",
   "main": "index.js",
+  "now": {
+    "dotenv": "variables.env.now",
+    "alias": "drcronline-server.now.sh"
+  },
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "proxy": "https://drcronline-server.herokuapp.com",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -20,6 +24,7 @@
     "es6-promisify": "^6.0.0",
     "express": "^4.16.3",
     "fawn": "^2.1.5",
+    "firebase": "^5.5.4",
     "html-to-text": "^4.0.0",
     "jimp": "^0.4.0",
     "joi": "^13.6.0",

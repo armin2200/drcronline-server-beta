@@ -1,5 +1,6 @@
 const jimp = require("jimp");
 const uuid = require("uuid");
+const fs = require("fs");
 
 exports.resize = async (req, res, next) => {
   try {
@@ -15,7 +16,8 @@ exports.resize = async (req, res, next) => {
     const photo = await jimp.read(req.file.buffer);
     await photo.resize(200, jimp.AUTO);
     await photo.write(`uploads/avatar/${profileImage}`);
-    req.body.profileImageUrl = `https://drcronline-server.herokuapp.com/uploads/avatar/${profileImage}`;
+    var imageData = await fs.readFile(`uploads/avatar/${profileImage}`);
+    req.body.profileImageUrl = `https://drcronline-server.now.sh/uploads/avatar/${profileImage}`;
     // once we have written the photo to our filesystem, keep going!
     next();
     // check if there is no new file to resize
