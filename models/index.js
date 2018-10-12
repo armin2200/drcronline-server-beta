@@ -19,6 +19,5 @@ module.exports.Article = require("./article");
 module.exports.User = require("./user");
 module.exports.Comment = require("./comment");
 module.exports.Token = require("./token");
-module.exports.Image = require("./image");
 
 // module.exports = mongoose;

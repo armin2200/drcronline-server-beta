@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const Joi = require("joi");
 
 const userSchema = new mongoose.Schema(
   {
@@ -90,27 +89,6 @@ userSchema.methods.comparePassword = async function(candidatePassword, next) {
   }
 };
 
-function validateUser(user) {
-  const schema = {
-    fullname: Joi.string()
-      .min(2)
-      .max(50)
-      .required(),
-    email: Joi.string()
-      .min(5)
-      .max(255)
-      .required()
-      .email(),
-    password: Joi.string()
-      .min(7)
-      .max(255)
-      .required()
-  };
-
-  return Joi.validate(user, schema);
-}
-
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
-exports.validate = validateUser;

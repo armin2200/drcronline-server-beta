@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true });
-const fs = require("fs");
 const crypto = require("crypto");
 const multer = require("multer");
 const { User, Token } = require("../models/index");
-const { resize } = require("../handlers/resize");
+const { uploadAvatar } = require("../handlers/uploadAvatar");
 const { loginRequired, ensureCorrectUser } = require("../middleware/auth");
 const mail = require("../handlers/mail");
+const cloudinary = require("../handlers/cloudinary");
 
 const multerOptions = {
   storage: multer.memoryStorage(),
@@ -19,6 +19,28 @@ const multerOptions = {
     }
   }
 };
+// const storage = multer.diskStorage({
+//   destination: function(req, file, cb) {
+//     cb(null, "uploads/avatar");
+//   }
+// });
+
+// const fileFilter = (req, file, next) => {
+//   const isPhoto = file.mimetype.startsWith("image/");
+//   if (isPhoto) {
+//     next(null, true);
+//   } else {
+//     next({ message: "That filetype isn't allowed!" }, false);
+//   }
+// };
+
+// const upload = multer({
+//   storage: storage,
+//   limits: {
+//     fileSize: 1024 * 1024 * 5
+//   },
+//   fileFilter: fileFilter
+// });
 
 router.post("/signin", async (req, res, next) => {
   try {
@@ -58,7 +80,7 @@ router.post("/signup", async (req, res, next) => {
       _userId: user._id,
       token: crypto.randomBytes(16).toString("hex")
     });
-    const resetURL = `https://drcronline.com/confirmation/${
+    const resetURL = `https://www.drcronline.com/confirmation/${
       tokenConfirm.token
     }`;
     await mail.send({
@@ -146,7 +168,7 @@ router.post("/confirmationResend", async (req, res, next) => {
       _userId: user._id,
       token: crypto.randomBytes(16).toString("hex")
     });
-    const resetURL = `https://drcronline.com/confirmation/${
+    const resetURL = `https://www.drcronline.com/confirmation/${
       tokenConfirm.token
     }`;
     await mail.send({
@@ -174,7 +196,9 @@ router.post("/reset", async (req, res, next) => {
     user.resetPasswordToken = crypto.randomBytes(20).toString("hex");
     user.resetPasswordExpires = Date.now() + 3600000; //1 hour from now
     await user.save();
-    const resetURL = `https://drcronline.com/reset/${user.resetPasswordToken}`;
+    const resetURL = `https://www.drcronline.com/reset/${
+      user.resetPasswordToken
+    }`;
     await mail.send({
       user,
       filename: "password-reset",
@@ -236,8 +260,8 @@ router.patch(
   "/:userId/profile",
   loginRequired,
   ensureCorrectUser,
-  multer(multerOptions).single("profileImageUrl"),
-  resize,
+  multer({ multerOptions }).single("profileImageUrl"),
+  uploadAvatar,
   async (req, res, next) => {
     try {
       const updatedUser = await User.findById(req.params.userId);
@@ -262,12 +286,11 @@ router.patch(
       await updatedUser.save();
       const token = updatedUser.generateAuthToken();
       if (req.body.hasPicChange === "true" && profileImageName) {
-        fs.unlink(`uploads/avatar/${profileImageName}`, err => {
-          if (err) {
-            console.log("failed to delete local image:" + err);
-          } else {
-            console.log("successfully deleted local image");
-          }
+        cloudinary.v2.uploader.destroy(profileImageName, function(
+          error,
+          result
+        ) {
+          console.log(result, error);
         });
       }
       const { _id, fullname, profileImageUrl } = updatedUser;
