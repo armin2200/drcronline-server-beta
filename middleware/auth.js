@@ -34,6 +34,7 @@ exports.ensureCorrectUser = function(req, res, next) {
 exports.isAdmin = function(req, res, next) {
   // 401 Unauthorized
   // 403 Forbidden
+
   if (!req.body.isAdmin)
     return next({ status: 403, message: "Access denied." });
   return next();

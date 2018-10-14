@@ -7,31 +7,19 @@ const {
   isAdmin
 } = require("../middleware/auth");
 const { Article } = require("../models/index");
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function(req, file, cb) {
-    cb(null, new Date().toISOString() + file.originalname);
-  }
-});
+const { uploadImage } = require("../handlers/uploadImageOfArticles");
 
-const fileFilter = (req, file, cb) => {
-  // reject a file
-  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-    cb(null, true);
-  } else {
-    cb(null, false);
+const multerOptions = {
+  storage: multer.memoryStorage(),
+  fileFilter(req, file, next) {
+    const isPhoto = file.mimetype.startsWith("image/");
+    if (isPhoto) {
+      next(null, true);
+    } else {
+      next({ message: "That filetype isn't allowed!" }, false);
+    }
   }
 };
-
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 5
-  },
-  fileFilter: fileFilter
-});
 router.get("/", async (req, res, next) => {
   try {
     const article = await Article.find().select("-__v");
@@ -64,15 +52,22 @@ router.post(
   }
 );
 
-router.post("/photos", upload.single("image"), async (req, res, next) => {
-  try {
-    res.status(201).json({
-      image: "http://" + req.headers.host + "/uploads/" + req.file.filename
-    });
-  } catch (error) {
-    next(error);
+router.post(
+  "/:userId/photos",
+  loginRequired,
+  ensureCorrectUser,
+  multer({ multerOptions }).single("image"),
+  uploadImage,
+  async (req, res, next) => {
+    try {
+      res.status(201).json({
+        image: req.body.ImageUrl
+      });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 router
   .route("/:articleId")
