@@ -22,7 +22,9 @@ const multerOptions = {
 };
 router.get("/", async (req, res, next) => {
   try {
-    const article = await Article.find().select("-__v");
+    const article = await Article.find()
+      .select("-__v")
+      .sort({ createdAt: -1 });
 
     res.status(200).json(article);
   } catch (err) {
