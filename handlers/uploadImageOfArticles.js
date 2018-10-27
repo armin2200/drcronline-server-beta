@@ -14,7 +14,6 @@ exports.uploadImage = async (req, res, next) => {
         .upload_stream(
           {
             folder: "article",
-            quality: 50,
             width: 850
           },
           (error, result) => {
