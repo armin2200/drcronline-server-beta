@@ -72,3 +72,5 @@ variables.env.now
 
 # Serverless directories
 .serverless
+package-lock
+Procfile
